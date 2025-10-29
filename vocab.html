@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocab Practice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.3s;
+        }
+        
+        body.dark {
+            background: #1a1a1a;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 300;
+            color: #333;
+            letter-spacing: 2px;
+            transition: color 0.3s;
+        }
+        
+        body.dark .header h1 {
+            color: #e0e0e0;
+        }
+        
+        .dark-mode-toggle {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: 1px solid #333;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #333;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        body.dark .dark-mode-toggle {
+            border-color: #e0e0e0;
+            color: #e0e0e0;
+        }
+        
+        .dark-mode-toggle:hover {
+            background: #333;
+            color: white;
+        }
+        
+        body.dark .dark-mode-toggle:hover {
+            background: #e0e0e0;
+            color: #1a1a1a;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: border-color 0.3s;
+        }
+        
+        body.dark .tabs {
+            border-bottom-color: #333;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 16px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #999;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab:hover {
+            color: #555;
+        }
+        
+        body.dark .tab:hover {
+            color: #bbb;
+        }
+        
+        .tab.active {
+            color: #333;
+            border-bottom-color: #333;
+        }
+        
+        body.dark .tab.active {
+            color: #e0e0e0;
+            border-bottom-color: #e0e0e0;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 2px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            transition: all 0.3s;
+        }
+        
+        body.dark .card {
+            background: #252525;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        .sentence {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+            text-align: center;
+            transition: color 0.3s;
+        }
+        
+        body.dark .sentence {
+            color: #ccc;
+        }
+        
+        .blank {
+            display: inline-block;
+            min-width: 120px;
+            border-bottom: 1px solid #ddd;
+            margin: 0 4px;
+            transition: border-color 0.3s;
+        }
+        
+        body.dark .blank {
+            border-bottom-color: #555;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option {
+            padding: 16px;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        body.dark .option {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+        
+        .option:hover {
+            background: #f0f0f0;
+            border-color: #ccc;
+        }
+        
+        body.dark .option:hover {
+            background: #333;
+            border-color: #555;
+        }
+        
+        .option.correct {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+        
+        body.dark .option.correct {
+            background: #1b5e20;
+            border-color: #4caf50;
+            color: #a5d6a7;
+        }
+        
+        .option.wrong {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+        
+        body.dark .option.wrong {
+            background: #b71c1c;
+            border-color: #f44336;
+            color: #ffcdd2;
+        }
+        
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .feedback {
+            margin-top: 24px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-left: 3px solid #333;
+            display: none;
+            transition: all 0.3s;
+        }
+        
+        body.dark .feedback {
+            background: #2a2a2a;
+            border-left-color: #e0e0e0;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+            transition: color 0.3s;
+        }
+        
+        body.dark .feedback-title {
+            color: #e0e0e0;
+        }
+        
+        .examples {
+            margin-top: 12px;
+        }
+        
+        .example {
+            margin: 8px 0;
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            transition: color 0.3s;
+        }
+        
+        body.dark .example {
+            color: #aaa;
+        }
+        
+        .next-btn {
+            margin-top: 24px;
+            width: 100%;
+            padding: 16px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+            display: none;
+        }
+        
+        body.dark .next-btn {
+            background: #e0e0e0;
+            color: #1a1a1a;
+        }
+        
+        .next-btn:hover {
+            background: #555;
+        }
+        
+        body.dark .next-btn:hover {
+            background: #fff;
+        }
+        
+        .next-btn.show {
+            display: block;
+        }
+        
+        .score {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        body.dark .score {
+            color: #999;
+        }
+        
+        /* Flashcard styles */
+        .flashcard-container {
+            perspective: 1000px;
+            min-height: 300px;
+            margin-bottom: 24px;
+        }
+        
+        .flashcard {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            transition: background 0.3s;
+        }
+        
+        body.dark .flashcard-face {
+            background: #252525;
+        }
+        
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-word {
+            font-size: 32px;
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 12px;
+            transition: color 0.3s;
+        }
+        
+        body.dark .flashcard-word {
+            color: #e0e0e0;
+        }
+        
+        .flashcard-hint {
+            font-size: 14px;
+            color: #999;
+            transition: color 0.3s;
+        }
+        
+        body.dark .flashcard-hint {
+            color: #777;
+        }
+        
+        .flashcard-definition {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+            text-align: center;
+            line-height: 1.6;
+            transition: color 0.3s;
+        }
+        
+        body.dark .flashcard-definition {
+            color: #ccc;
+        }
+        
+        .flashcard-examples {
+            margin-top: 20px;
+        }
+        
+        .flashcard-example {
+            font-size: 14px;
+            color: #666;
+            margin: 8px 0;
+            text-align: left;
+            transition: color 0.3s;
+        }
+        
+        body.dark .flashcard-example {
+            color: #aaa;
+        }
+        
+        .flashcard-nav {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        
+        .flashcard-nav button {
+            padding: 12px 24px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        body.dark .flashcard-nav button {
+            background: #e0e0e0;
+            color: #1a1a1a;
+        }
+        
+        .flashcard-nav button:hover {
+            background: #555;
+        }
+        
+        body.dark .flashcard-nav button:hover {
+            background: #fff;
+        }
+        
+        .flashcard-counter {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        body.dark .flashcard-counter {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VOCABULARY</h1>
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()">DARK</button>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('quiz')">Quiz</button>
+            <button class="tab" onclick="switchTab('definition')">Definition</button>
+            <button class="tab" onclick="switchTab('flashcards')">Flashcards</button>
+        </div>
+        
+        <!-- Quiz Tab -->
+        <div id="quiz" class="tab-content active">
+            <div class="card">
+                <div class="sentence" id="sentence"></div>
+                <div class="options" id="options"></div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="nextBtn">NEXT</button>
+            </div>
+            <div class="score" id="score">Score: 0 / 0</div>
+        </div>
+        
+        <!-- Definition Tab -->
+        <div id="definition" class="tab-content">
+            <div class="card">
+                <div class="sentence" id="def-word" style="font-size: 28px; font-weight: 300; margin-bottom: 30px;"></div>
+                <div class="options" id="def-options"></div>
+                <div class="feedback" id="def-feedback"></div>
+                <button class="next-btn" id="defNextBtn">NEXT</button>
+            </div>
+            <div class="score" id="def-score">Score: 0 / 0</div>
+        </div>
+        
+        <!-- Flashcards Tab -->
+        <div id="flashcards" class="tab-content">
+            <div class="card">
+                <div class="flashcard-container">
+                    <div class="flashcard" id="flashcard" onclick="flipCard()">
+                        <div class="flashcard-face flashcard-front">
+                            <div class="flashcard-word" id="flashcard-word"></div>
+                            <div class="flashcard-hint">Click to see definition</div>
+                        </div>
+                        <div class="flashcard-face flashcard-back">
+                            <div class="flashcard-definition" id="flashcard-definition"></div>
+                            <div class="flashcard-examples" id="flashcard-examples"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flashcard-nav">
+                    <button onclick="previousCard()">PREVIOUS</button>
+                    <button onclick="nextCard()">NEXT</button>
+                </div>
+            </div>
+            <div class="flashcard-counter" id="flashcard-counter"></div>
+        </div>
+    </div>
+
+    <script>
+       const vocabData = [
+            {
+                word: "obsequious",
+                sentence: "The politician's speech was full of ___ remarks designed to win votes.",
+                correct: "obsequious",
+                options: ["obsequious", "candid", "reticent", "austere"],
+                definition: "Obsequious means excessively obedient or attentive, often to gain favor.",
+                definitionOptions: [
+                    "Excessively obedient or attentive, often to gain favor",
+                    "Showing a lack of respect or courtesy",
+                    "Unwilling to spend money or use resources",
+                    "Having or showing a modest view of one's importance",
+                    "Calm, dignified, and unhurried"
+                ],
+                examples: [
+                    "The obsequious waiter hovered around the celebrity's table all evening.",
+                    "Her obsequious behavior toward the boss made her colleagues uncomfortable.",
+                    "He gave an obsequious bow, hoping to impress the wealthy patron."
+                ]
+            },
+            {
+                word: "arduous",
+                sentence: "Despite the ___ conditions, the explorers pressed onward.",
+                correct: "arduous",
+                options: ["arduous", "facile", "trivial", "pleasant"],
+                definition: "Arduous means involving or requiring strenuous effort; difficult and tiring.",
+                definitionOptions: [
+                    "Involving or requiring strenuous effort; difficult and tiring",
+                    "Easy to achieve or accomplish",
+                    "Of little value or importance",
+                    "Giving a sense of happy satisfaction",
+                    "Done without careful consideration"
+                ],
+                examples: [
+                    "The arduous climb to the summit took three days.",
+                    "Learning a new language can be an arduous process.",
+                    "She completed the arduous task of organizing twenty years of files."
+                ]
+            },
+            {
+                word: "aloof",
+                sentence: "His ___ attitude made it difficult for others to approach him.",
+                correct: "aloof",
+                options: ["aloof", "gregarious", "affable", "cordial"],
+                definition: "Aloof means not friendly or forthcoming; cool and distant.",
+                definitionOptions: [
+                    "Not friendly or forthcoming; cool and distant",
+                    "Fond of company; sociable",
+                    "Friendly, good-natured, and easy to talk to",
+                    "Warm and friendly in manner",
+                    "Showing enthusiasm and intensity"
+                ],
+                examples: [
+                    "The aloof executive rarely joined staff for lunch.",
+                    "She remained aloof from office gossip and drama.",
+                    "His aloof demeanor was actually just shyness in disguise."
+                ]
+            },
+            {
+                word: "dilapidation",
+                sentence: "The garden was in a state of ___ after years of neglect.",
+                correct: "dilapidation",
+                options: ["dilapidation", "splendor", "magnificence", "prosperity"],
+                definition: "Dilapidation means a state of disrepair or ruin as a result of age or neglect.",
+                definitionOptions: [
+                    "A state of disrepair or ruin as a result of age or neglect",
+                    "Impressive beauty or scale",
+                    "The quality of being magnificent",
+                    "The state of being successful and thriving",
+                    "The quality of being well-maintained"
+                ],
+                examples: [
+                    "The mansion had fallen into dilapidation since the owner's death.",
+                    "Years of dilapidation made the building unsafe to enter.",
+                    "They bought the property despite its obvious dilapidation."
+                ]
+            },
+            {
+                word: "penchant",
+                sentence: "Her ___ for classical music was evident in her vast collection.",
+                correct: "penchant",
+                options: ["penchant", "aversion", "indifference", "apathy"],
+                definition: "Penchant means a strong or habitual liking for something or tendency to do something.",
+                definitionOptions: [
+                    "A strong or habitual liking for something or tendency to do something",
+                    "A strong dislike or disinclination",
+                    "Lack of interest or concern",
+                    "Lack of feeling or emotion",
+                    "A temporary interest in something"
+                ],
+                examples: [
+                    "He has a penchant for wearing bright, colorful ties.",
+                    "The director's penchant for long shots is visible in all his films.",
+                    "She developed a penchant for spicy food during her travels in Asia."
+                ]
+            },
+            {
+                word: "aberrant",
+                sentence: "The scientist's ___ behavior raised concerns among her colleagues.",
+                correct: "aberrant",
+                options: ["aberrant", "typical", "conventional", "standard"],
+                definition: "Aberrant means deviating from the normal or usual course; abnormal.",
+                definitionOptions: [
+                    "Deviating from the normal or usual course; abnormal",
+                    "Conforming to established standards or norms",
+                    "Lacking originality or freshness",
+                    "Easily influenced or manipulated",
+                    "Lacking clarity or precision"
+                ],
+                examples: [
+                    "The patient's aberrant behavior was a sign of a deeper psychological issue.",
+                    "The artist's aberrant style set him apart from his contemporaries.",
+                    "The company's aberrant financial practices led to a thorough investigation."
+                ]
+            },
+            {
+                word: "belligerent",
+                sentence: "His ___ attitude towards the opposing team led to several fouls.",
+                correct: "belligerent",
+                options: ["belligerent", "peaceful", "amicable", "conciliatory"],
+                definition: "Belligerent means hostile and aggressive.",
+                definitionOptions: [
+                    "Hostile and aggressive",
+                    "Friendly and cooperative",
+                    "Indifferent and detached",
+                    "Calm and composed",
+                    "Eager to please"
+                ],
+                examples: [
+                    "The belligerent nations refused to negotiate a peace treaty.",
+                    "Her belligerent tone made it difficult to have a constructive conversation.",
+                    "The belligerent behavior of the protesters led to clashes with the police."
+                ]
+            },
+            {
+                word: "cacophony",
+                sentence: "The ___ of car horns outside made it impossible to concentrate.",
+                correct: "cacophony",
+                options: ["cacophony", "melody", "harmony", "euphony"],
+                definition: "Cacophony means a harsh, discordant mixture of sounds.",
+                definitionOptions: [
+                    "A harsh, discordant mixture of sounds",
+                    "A pleasant and harmonious sound",
+                    "A soft and soothing noise",
+                    "A rhythmic and musical tone",
+                    "A sudden and sharp noise"
+                ],
+                examples: [
+                    "The cacophony of the city streets overwhelmed her senses.",
+                    "A cacophony of voices filled the room during the heated debate.",
+                    "The sudden cacophony of alarms startled everyone in the building."
+                ]
+            },
+            {
+                word: "debilitate",
+                sentence: "The long illness had ___ her strength and energy.",
+                correct: "debilitate",
+                options: ["debilitate", "invigorate", "energize", "revitalize"],
+                definition: "Debilitate means to make someone weak or infirm.",
+                definitionOptions: [
+                    "To make someone weak or infirm",
+                    "To strengthen or energize",
+                    "To confuse or bewilder",
+                    "To soothe or calm",
+                    "To excite or stimulate"
+                ],
+                examples: [
+                    "The disease debilitated him to the point where he could barely move.",
+                    "The prolonged drought debilitated the crops, leading to a poor harvest.",
+                    "The medication was designed to debilitate the virus without harming the host."
+                ]
+            },
+            {
+                word: "ebullient",
+                sentence: "Her ___ personality made her the life of every party.",
+                correct: "ebullient",
+                options: ["ebullient", "sullen", "melancholy", "apathetic"],
+                definition: "Ebullient means cheerful and full of energy.",
+                definitionOptions: [
+                    "Cheerful and full of energy",
+                    "Sad and gloomy",
+                    "Indifferent and detached",
+                    "Lacking enthusiasm",
+                    "Easily irritated"
+                ],
+                examples: [
+                    "The ebullient crowd cheered as the team took the field.",
+                    "Her ebullient spirit lifted everyone's mood during the difficult times.",
+                    "The ebullient laughter of the children echoed through the park."
+                ]
+            },
+            {
+                word: "facetious",
+                sentence: "His ___ remarks during the meeting were not appreciated.",
+                correct: "facetious",
+                options: ["facetious", "serious", "solemn", "earnest"],
+                definition: "Facetious means treating serious issues with deliberately inappropriate humor.",
+                definitionOptions: [
+                    "Treating serious issues with deliberately inappropriate humor",
+                    "Showing deep sincerity and earnestness",
+                    "Lacking any sense of humor",
+                    "Being overly serious and formal",
+                    "Avoiding humor altogether"
+                ],
+                examples: [
+                    "Her facetious comments during the presentation were met with disapproval.",
+                    "He made a facetious remark about the project's deadline, which was taken seriously.",
+                    "The facetious tone of his email caused confusion among the recipients."
+                ]
+            },
+            {
+                word: "garrulous",
+                sentence: "The ___ neighbor always had a story to tell.",
+                correct: "garrulous",
+                options: ["garrulous", "taciturn", "reserved", "reticent"],
+                definition: "Garrulous means excessively talkative, especially on trivial matters.",
+                definitionOptions: [
+                    "Excessively talkative, especially on trivial matters",
+                    "Quiet and reserved",
+                    "Unwilling to speak",
+                    "Expressing oneself concisely",
+                    "Avoiding conversation"
+                ],
+                examples: [
+                    "The garrulous tour guide kept us entertained with anecdotes.",
+                    "His garrulous nature made him popular at social gatherings.",
+                    "She was known for her garrulous conversations that lasted for hours."
+                ]
+            },
+            {
+                word: "harangue",
+                sentence: "The politician delivered a long ___ about the country's future.",
+                correct: "harangue",
+                options: ["harangue", "compliment", "praise", "tribute"],
+                definition: "Harangue means a lengthy and aggressive speech.",
+                definitionOptions: [
+                    "A lengthy and aggressive speech",
+                    "A brief and casual conversation",
+                    "A formal and respectful address",
+                    "A short and humorous talk",
+                    "An impromptu and informal discussion"
+                ],
+                examples: [
+                    "The coach's harangue motivated the team to perform better.",
+                    "He gave a harangue about the importance of discipline in the workplace.",
+                    "The harangue at the rally stirred the crowd into action."
+                ]
+            },
+            {
+                word: "iconoclast",
+                sentence: "The artist was considered an ___ for challenging traditional art forms.",
+                correct: "iconoclast",
+                options: ["iconoclast", "conformist", "traditionalist", "purist"],
+                definition: "Iconoclast means a person who attacks or criticizes cherished beliefs or institutions.",
+                definitionOptions: [
+                    "A person who attacks or criticizes cherished beliefs or institutions",
+                    "A person who adheres to traditional beliefs and practices",
+                    "A person who avoids controversy",
+                    "A person who seeks to preserve established customs",
+                    "A person who follows popular trends"
+                ],
+                examples: [
+                    "The iconoclast filmmaker introduced unconventional techniques in his movies.",
+                    "Her iconoclastic views often led to debates in academic circles.",
+                    "The artist's iconoclastic approach to painting was both criticized and admired."
+                ]
+            },
+            {
+                word: "nefarious",
+                sentence: "The villain's ___ plot was foiled by the hero.",
+                correct: "nefarious",
+                options: ["nefarious", "honorable", "virtuous", "laudable"],
+                definition: "Nefarious means wicked or criminal.",
+                definitionOptions: [
+                    "Wicked or criminal",
+                    "Good or virtuous",
+                    "Respectable and honorable",
+                    "Boring or dull",
+                    "Accidental or unintentional"
+                ],
+                examples: [
+                    "The nefarious scheme was exposed by the detectives.",
+                    "He was known for his nefarious dealings in the city.",
+                    "The company's nefarious activities were reported to the authorities."
+                ]
+            },
+            {
+                word: "obdurate",
+                sentence: "Despite pleas, he remained ___ and refused to apologize.",
+                correct: "obdurate",
+                options: ["obdurate", "flexible", "yielding", "pliant"],
+                definition: "Obdurate means stubbornly refusing to change one's mind.",
+                definitionOptions: [
+                    "Stubbornly refusing to change one's mind",
+                    "Easily persuaded",
+                    "Flexible and adaptable",
+                    "Soft and gentle",
+                    "Weak or indecisive"
+                ],
+                examples: [
+                    "Her obdurate attitude frustrated everyone around her.",
+                    "The obdurate landlord refused to lower the rent.",
+                    "He was obdurate in his opposition to the plan."
+                ]
+            },
+            {
+                word: "pragmatic",
+                sentence: "Her ___ approach to problem-solving always yielded results.",
+                correct: "pragmatic",
+                options: ["pragmatic", "idealistic", "impractical", "theoretical"],
+                definition: "Pragmatic means dealing with things sensibly and realistically.",
+                definitionOptions: [
+                    "Dealing with things sensibly and realistically",
+                    "Guided by ideals rather than practical concerns",
+                    "Unrealistic and impractical",
+                    "Speculative or theoretical",
+                    "Emotionally driven"
+                ],
+                examples: [
+                    "He took a pragmatic approach to financial planning.",
+                    "Her pragmatic solutions solved long-standing problems.",
+                    "Pragmatic leadership focuses on results rather than ideals."
+                ]
+            },
+            {
+                word: "abate",
+                sentence: "The storm's intensity began to ___ after several hours.",
+                correct: "abate",
+                options: ["abate", "intensify", "escalate", "augment"],
+                definition: "To lessen in intensity or degree.",
+                definitionOptions: [
+                    "To lessen in intensity or degree",
+                    "To increase in intensity or degree",
+                    "To remain unchanged",
+                    "To cause to become more severe",
+                    "To stop abruptly"
+                ],
+                examples: [
+                    "The pain in his leg abated after taking the medication.",
+                    "The government took measures to abate pollution levels.",
+                    "Her anger abated once she understood the situation."
+                ]
+            },
+            {
+                word: "alacrity",
+                sentence: "He accepted the invitation with ___ and enthusiasm.",
+                correct: "alacrity",
+                options: ["alacrity", "reluctance", "hesitation", "indifference"],
+                definition: "Brisk and cheerful readiness.",
+                definitionOptions: [
+                    "Brisk and cheerful readiness",
+                    "Slow and unwilling response",
+                    "Lack of enthusiasm",
+                    "Indifference or apathy",
+                    "Uncertainty or doubt"
+                ],
+                examples: [
+                    "She completed the task with alacrity.",
+                    "His alacrity in volunteering was appreciated.",
+                    "The team responded with alacrity to the challenge."
+                ]
+            },
+            {
+                word: "aesthetic",
+                sentence: "The artist's work was admired for its ___ appeal.",
+                correct: "aesthetic",
+                options: ["aesthetic", "functional", "utilitarian", "practical"],
+                definition: "Concerned with beauty or the appreciation of beauty.",
+                definitionOptions: [
+                    "Concerned with beauty or the appreciation of beauty",
+                    "Focused on practicality and usefulness",
+                    "Emphasizing efficiency and function",
+                    "Ignoring visual or artistic elements",
+                    "Prioritizing cost-effectiveness"
+                ],
+                examples: [
+                    "The building's aesthetic design attracted many visitors.",
+                    "She has a keen aesthetic sense, evident in her fashion choices.",
+                    "The garden was laid out with aesthetic considerations in mind."
+                ]
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = 0;
+        let currentFlashcard = 0;
+        let currentDefQuestion = 0;
+        let defScore = 0;
+        let defAnswered = 0;
+
+        // Dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark');
+            const btn = document.querySelector('.dark-mode-toggle');
+            btn.textContent = document.body.classList.contains('dark') ? 'LIGHT' : 'DARK';
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if (tabName === 'flashcards') {
+                loadFlashcard();
+            } else if (tabName === 'definition') {
+                loadDefQuestion();
+            }
+        }
+
+        // Quiz functions
+        function loadQuestion() {
+            const q = vocabData[currentQuestion];
+            document.getElementById('sentence').innerHTML = q.sentence.replace('___', '<span class="blank"></span>');
+            
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            
+            // Shuffle options randomly
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement('div');
+                btn.className = 'option';
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option);
+                optionsDiv.appendChild(btn);
+            });
+            
+            document.getElementById('feedback').classList.remove('show');
+            document.getElementById('nextBtn').classList.remove('show');
+        }
+
+        function checkAnswer(selected) {
+            const q = vocabData[currentQuestion];
+            const options = document.querySelectorAll('#options .option');
+            
+            answered++;
+            
+            options.forEach(opt => {
+                opt.classList.add('disabled');
+                opt.onclick = null;
+                
+                if (opt.textContent === q.correct) {
+                    opt.classList.add('correct');
+                }
+                
+                if (opt.textContent === selected && selected !== q.correct) {
+                    opt.classList.add('wrong');
+                }
+            });
+            
+            if (selected === q.correct) {
+                score++;
+            }
+            
+            const feedback = document.getElementById('feedback');
+            feedback.innerHTML = `
+                <div class="feedback-title">${q.correct}</div>
+                <div>${q.definition}</div>
+                <div class="examples">
+                    ${q.examples.map(ex => `<div class="example">• ${ex}</div>`).join('')}
+                </div>
+            `;
+            feedback.classList.add('show');
+            
+            document.getElementById('nextBtn').classList.add('show');
+            updateScore();
+        }
+
+        function updateScore() {
+            document.getElementById('score').textContent = `Score: ${score} / ${answered}`;
+        }
+
+        document.getElementById('nextBtn').onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < vocabData.length) {
+                loadQuestion();
+            } else {
+                document.querySelector('#quiz .card').innerHTML = `
+                    <div style="text-align: center; padding: 40px 0;">
+                        <h2 style="font-weight: 300; margin-bottom: 16px; color: inherit;">Complete!</h2>
+                        <p style="font-size: 18px; color: #666;">Final Score: ${score} / ${answered}</p>
+                        <button onclick="restartQuiz()" style="margin-top: 24px; padding: 12px 32px; background: #333; color: white; border: none; cursor: pointer; font-size: 16px;">RESTART</button>
+                    </div>
+                `;
+            }
+        };
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = 0;
+            document.querySelector('#quiz .card').innerHTML = `
+                <div class="sentence" id="sentence"></div>
+                <div class="options" id="options"></div>
+                <div class="feedback" id="feedback"></div>
+                <button class="next-btn" id="nextBtn">NEXT</button>
+            `;
+            document.getElementById('nextBtn').onclick = () => {
+                currentQuestion++;
+                if (currentQuestion < vocabData.length) {
+                    loadQuestion();
+                } else {
+                    document.querySelector('#quiz .card').innerHTML = `
+                        <div style="text-align: center; padding: 40px 0;">
+                            <h2 style="font-weight: 300; margin-bottom: 16px; color: inherit;">Complete!</h2>
+                            <p style="font-size: 18px; color: #666;">Final Score: ${score} / ${answered}</p>
+                            <button onclick="restartQuiz()" style="margin-top: 24px; padding: 12px 32px; background: #333; color: white; border: none; cursor: pointer; font-size: 16px;">RESTART</button>
+                        </div>
+                    `;
+                }
+            };
+            loadQuestion();
+            updateScore();
+        }
+
+        // Flashcard functions
+        function loadFlashcard() {
+            const card = vocabData[currentFlashcard];
+            document.getElementById('flashcard-word').textContent = card.word;
+            document.getElementById('flashcard-definition').textContent = card.definition;
+            document.getElementById('flashcard-examples').innerHTML = card.examples.map(ex => 
+                `<div class="flashcard-example">• ${ex}</div>`
+            ).join('');
+            document.getElementById('flashcard-counter').textContent = `Card ${currentFlashcard + 1} / ${vocabData.length}`;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            currentFlashcard = (currentFlashcard + 1) % vocabData.length;
+            loadFlashcard();
+        }
+
+        function previousCard() {
+            currentFlashcard = (currentFlashcard - 1 + vocabData.length) % vocabData.length;
+            loadFlashcard();
+        }
+
+        // Definition Quiz functions
+        function loadDefQuestion() {
+            const q = vocabData[currentDefQuestion];
+            document.getElementById('def-word').textContent = q.word;
+            
+            const optionsDiv = document.getElementById('def-options');
+            optionsDiv.innerHTML = '';
+            
+            // Shuffle definition options randomly
+            const shuffledOptions = [...q.definitionOptions].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach(option => {
+                const btn = document.createElement('div');
+                btn.className = 'option';
+                btn.textContent = option;
+                btn.onclick = () => checkDefAnswer(option);
+                optionsDiv.appendChild(btn);
+            });
+            
+            document.getElementById('def-feedback').classList.remove('show');
+            document.getElementById('defNextBtn').classList.remove('show');
+        }
+
+        function checkDefAnswer(selected) {
+            const q = vocabData[currentDefQuestion];
+            const options = document.querySelectorAll('#def-options .option');
+            
+            defAnswered++;
+            
+            options.forEach(opt => {
+                opt.classList.add('disabled');
+                opt.onclick = null;
+                
+                if (opt.textContent === q.definitionOptions[0]) {
+                    opt.classList.add('correct');
+                }
+                
+                if (opt.textContent === selected && selected !== q.definitionOptions[0]) {
+                    opt.classList.add('wrong');
+                }
+            });
+            
+            if (selected === q.definitionOptions[0]) {
+                defScore++;
+            }
+            
+            const feedback = document.getElementById('def-feedback');
+            feedback.innerHTML = `
+                <div class="feedback-title">${q.word}</div>
+                <div style="margin-bottom: 12px;">${q.definition}</div>
+                <div class="examples">
+                    ${q.examples.slice(0, 2).map(ex => `<div class="example">• ${ex}</div>`).join('')}
+                </div>
+            `;
+            feedback.classList.add('show');
+            
+            document.getElementById('defNextBtn').classList.add('show');
+            updateDefScore();
+        }
+
+        function updateDefScore() {
+            document.getElementById('def-score').textContent = `Score: ${defScore} / ${defAnswered}`;
+        }
+
+        document.getElementById('defNextBtn').onclick = () => {
+            currentDefQuestion++;
+            if (currentDefQuestion < vocabData.length) {
+                loadDefQuestion();
+            } else {
+                document.querySelector('#definition .card').innerHTML = `
+                    <div style="text-align: center; padding: 40px 0;">
+                        <h2 style="font-weight: 300; margin-bottom: 16px; color: inherit;">Complete!</h2>
+                        <p style="font-size: 18px; color: #666;">Final Score: ${defScore} / ${defAnswered}</p>
+                        <button onclick="restartDefQuiz()" style="margin-top: 24px; padding: 12px 32px; background: #333; color: white; border: none; cursor: pointer; font-size: 16px;">RESTART</button>
+                    </div>
+                `;
+            }
+        };
+
+        function restartDefQuiz() {
+            currentDefQuestion = 0;
+            defScore = 0;
+            defAnswered = 0;
+            document.querySelector('#definition .card').innerHTML = `
+                <div class="sentence" id="def-word" style="font-size: 28px; font-weight: 300; margin-bottom: 30px;"></div>
+                <div class="options" id="def-options"></div>
+                <div class="feedback" id="def-feedback"></div>
+                <button class="next-btn" id="defNextBtn">NEXT</button>
+            `;
+            document.getElementById('defNextBtn').onclick = () => {
+                currentDefQuestion++;
+                if (currentDefQuestion < vocabData.length) {
+                    loadDefQuestion();
+                } else {
+                    document.querySelector('#definition .card').innerHTML = `
+                        <div style="text-align: center; padding: 40px 0;">
+                            <h2 style="font-weight: 300; margin-bottom: 16px; color: inherit;">Complete!</h2>
+                            <p style="font-size: 18px; color: #666;">Final Score: ${defScore} / ${defAnswered}</p>
+                            <button onclick="restartDefQuiz()" style="margin-top: 24px; padding: 12px 32px; background: #333; color: white; border: none; cursor: pointer; font-size: 16px;">RESTART</button>
+                        </div>
+                    `;
+                }
+            };
+            loadDefQuestion();
+            updateDefScore();
+        }
+
+        // Initialize
+        loadQuestion();
+    </script>
+</body>
+</html>
